@@ -7,12 +7,15 @@
 #include <chrono>
 #include <ctime>
 
+
 // Forward declarations
 __device__ void register_q(int x, int y, int num_queens);
 __global__ void N_Queens_Kernel(int num_queens);
 
+
 // Global variables
 const int Nq = (2147483648 / 8); // N = 1/8 maxint32 = 268,435,456 queens
+
 
 // GPU-local variables
 __device__ int board[Nq] = { 0 };   // list of queen positions, where board[x] = y
@@ -21,6 +24,7 @@ __device__ short occ_row[Nq];       // row occupancy
 __device__ short occ_adiag[2 * Nq]; // ascending diagonal occupancy
 __device__ short occ_ddiag[2 * Nq]; // decending diagonal occupancy
 __device__ short collision_flag[1] = { 0 }; // Flag raised if any 2 Queens can attack each other
+
 
 // GPU functions
 __device__ void register_q(int x, int y, int num_queens) // Check for collision and add queen to occupancy lists
@@ -34,7 +38,8 @@ __device__ void register_q(int x, int y, int num_queens) // Check for collision 
 	occ_ddiag[num_queens + (x - y)] = 1;
 }
 
-__global__ void N_Queens_Kernel(int num_queens) // GPU runtime 
+// GPU kernel
+__global__ void N_Queens_Kernel(int num_queens)
 {
 	int i = (blockDim.x * blockIdx.x + threadIdx.x) + 1;
 	int x, y, x1, y1;
@@ -101,6 +106,7 @@ __global__ void N_Queens_Kernel(int num_queens) // GPU runtime
 
 }
 
+
 int main()
 {
 	auto global_start = std::chrono::system_clock::now(); // Program start time
@@ -110,14 +116,17 @@ int main()
 	short local_flag = 0;
 	int loc_board[1];
 
+
 	// Get pointers to GPU buffers
 	cudaError_t cudaStatus;
 	cudaStatus = cudaGetSymbolAddress((void**)&cflag_ptr, collision_flag);
 	cudaStatus = cudaGetSymbolAddress((void**)&board_ptr, board);
 
+
 	// Allocate CUDA blocks and threads to dispatch
 	int threadsPerBlock = 256;
 	int blocksPerGrid = (Nq / 2 + threadsPerBlock - 1) / threadsPerBlock;
+
 
 	// Initialize
 	cudaStatus = cudaSetDevice(0);
@@ -126,9 +135,11 @@ int main()
 		goto Error;
 	}
 
+
 	auto gpu_start = std::chrono::system_clock::now(); // GPU processing start time
 
 	N_Queens_Kernel <<<blocksPerGrid, threadsPerBlock >>> (Nq); // Execute GPU code
+
 
 	// Check for any errors launching the kernels
 	cudaStatus = cudaGetLastError();
@@ -137,6 +148,7 @@ int main()
 		goto Error;
 	}
 
+
 	// Wait for all cores to terminate
 	cudaStatus = cudaDeviceSynchronize();
 	if (cudaStatus != cudaSuccess) {
@@ -144,17 +156,18 @@ int main()
 		goto Error;
 	}
 
+
 	// Copy verification flag state to host
 	cudaStatus = cudaMemcpy(&local_flag, cflag_ptr, sizeof(short), cudaMemcpyDeviceToHost);
 
-	auto gpu_end = std::chrono::system_clock::now();
-	std::chrono::duration<double> gpu_mseconds = (gpu_end - gpu_start) * 1000;
 
+	// Debug
 	std::cout << "N = " << Nq << std::endl;
-
 	if (local_flag == 0) {
 		std::cout << "Solution verified" << std::endl;
 	}
+	auto gpu_end = std::chrono::system_clock::now();
+	std::chrono::duration<double> gpu_mseconds = (gpu_end - gpu_start) * 1000;
 	std::cout << "GPU time (ms): " << gpu_mseconds.count() << std::endl;
 
 
@@ -165,14 +178,16 @@ int main()
 		goto Error;
 	}
 
+
 	// Free up all GPU memory
 Error:
 	cudaFree(board);
-	cudaFree(&collision_flag);
+	cudaFree(collision_flag);
 	cudaFree(occ_col);
 	cudaFree(occ_row);
 	cudaFree(occ_adiag);
 	cudaFree(occ_ddiag);
+
 
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "queens died :(");
@@ -181,7 +196,6 @@ Error:
 
 	auto global_end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = global_end - global_start;
-
 	std::cout << "Total exec time (s): " << elapsed_seconds.count() << std::endl;
 
 
@@ -192,7 +206,6 @@ Error:
 		return 1;
 	}
 
+
 	return 0;
 }
-
-
