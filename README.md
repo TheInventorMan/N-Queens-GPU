@@ -1,2 +1,14 @@
-# N_Queens_GPU
+# A GPU-accelerated N-Queens solver
+
+This implements the linear time algorithm presented in the following paper:  
+[https://arxiv.org/pdf/1805.07329.pdf].
+
+Since the placement of the queens are no longer interdependent, I was able to parallelize the algorithm using the CUDA API (just for fun). The result is an extremely fast solver, capable of solving for N = 268,435,456 in about 173 milliseconds. There is some overhead due to the data transfer between the host computer and the GPU, so the script takes a total of 1.7 seconds to run:
+
+![Screen Capture](screencap.JPG) 
+
+The code also has a built-in verification script to ensure that the solution is valid (i.e. no two queens can attack each other).  
+
+Right now, the only thing pending is a way to push the solution array back to my local machine in chunks. The built-in cudaMemcpy function seems to copy the solution array as one very long, linear byte sequence. As N becomes very large, the solution reaches several hundreds of megabytes to a few gigabytes, before we start hitting integer limits and cannot go any further.  
+
  
