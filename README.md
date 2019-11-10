@@ -9,6 +9,6 @@ Since the placement of the queens are no longer interdependent, I was able to pa
 
 The code also has a built-in verification script to ensure that the solution is valid (i.e. no two queens can attack each other).  
 
-Right now, the only thing pending is a way to push the solution array back to my local machine in chunks. The built-in cudaMemcpy function seems to copy the solution array as one very long, linear byte sequence. As N becomes very large, the solution reaches several hundreds of megabytes to a few gigabytes, before we start hitting integer limits and cannot go any further.  
+Right now, the only task pending is a way to push the solution array from the GPU back to my local machine in chunks. The built-in cudaMemcpy function seems to copy the solution array as one very long, linear byte sequence. As N becomes very large, the solution reaches several hundreds of megabytes to a few gigabytes, before we start hitting integer limits and cannot go any further.  
 
  
