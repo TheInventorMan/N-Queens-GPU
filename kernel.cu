@@ -12,7 +12,7 @@ __device__ void register_q(int x, int y, int num_queens);
 __global__ void N_Queens_Kernel(int num_queens);
 
 // Global variables
-const int Nq = (2147483648/8); // N = 1/8 maxint32 = 268,435,456 queens
+const int Nq = (2147483648 / 8); // N = 1/8 maxint32 = 268,435,456 queens
 
 // GPU-local variables
 __device__ int board[Nq] = { 0 };   // list of queen positions, where board[x] = y
@@ -69,11 +69,11 @@ __global__ void N_Queens_Kernel(int num_queens) // GPU runtime
 	else {  // Case 3, all other values of N
 		x = i - 1;
 		y = 2 * i - 1;
-		x1 = (num_queens-1) / 2 + i - 1;
+		x1 = (num_queens - 1) / 2 + i - 1;
 		y1 = 2 * i - 2;
 
-		register_q(x, y, num_queens-1);
-		register_q(x1, y1, num_queens-1);
+		register_q(x, y, num_queens - 1);
+		register_q(x1, y1, num_queens - 1);
 
 		board[x] = y;
 		board[x1] = y1;
@@ -82,13 +82,13 @@ __global__ void N_Queens_Kernel(int num_queens) // GPU runtime
 			x = i - 1;
 			y = (2 * i + num_queens / 2 - 3 % num_queens) % num_queens;
 			x1 = num_queens - 1 - i;
-			y1 = num_queens - 1 - (2 * i + (num_queens-1) / 2 - 3 % (num_queens-1)) - 1;
+			y1 = num_queens - 1 - (2 * i + (num_queens - 1) / 2 - 3 % (num_queens - 1)) - 1;
 			if (y1 < 0) {
-				y1 += num_queens-1;
+				y1 += num_queens - 1;
 			}
 
-			register_q(x, y, num_queens-1);
-			register_q(x1, y1, num_queens-1);
+			register_q(x, y, num_queens - 1);
+			register_q(x1, y1, num_queens - 1);
 
 			board[x] = y;
 			board[x1] = y1;
@@ -96,7 +96,7 @@ __global__ void N_Queens_Kernel(int num_queens) // GPU runtime
 		if (blockIdx.x == 0 && threadIdx.x == 0) {
 			board[num_queens - 1] = num_queens - 1;
 		}
-		
+
 	}
 
 }
@@ -128,7 +128,7 @@ int main()
 
 	auto gpu_start = std::chrono::system_clock::now(); // GPU processing start time
 
-	N_Queens_Kernel << <blocksPerGrid, threadsPerBlock >> > (Nq); // Execute GPU code
+	N_Queens_Kernel <<<blocksPerGrid, threadsPerBlock >>> (Nq); // Execute GPU code
 
 	// Check for any errors launching the kernels
 	cudaStatus = cudaGetLastError();
@@ -174,25 +174,25 @@ Error:
 	cudaFree(occ_adiag);
 	cudaFree(occ_ddiag);
 
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "queens died :(");
-        return 1;
-    }
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "queens died :(");
+		return 1;
+	}
 
-	auto global_end = std::chrono::system_clock::now();	
+	auto global_end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = global_end - global_start;
 
 	std::cout << "Total exec time (s): " << elapsed_seconds.count() << std::endl;
-    
 
-    // cudaDeviceReset must be called before exiting
-    cudaStatus = cudaDeviceReset();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaDeviceReset failed!");
-        return 1;
-    }
 
-    return 0;
+	// cudaDeviceReset must be called before exiting
+	cudaStatus = cudaDeviceReset();
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaDeviceReset failed!");
+		return 1;
+	}
+
+	return 0;
 }
 
 
