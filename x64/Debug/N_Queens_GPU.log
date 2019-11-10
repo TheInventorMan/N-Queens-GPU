@@ -1,62 +1,62 @@
 ﻿  Compiling CUDA source file kernel.cu...
   
   C:\Users\mneha\source\repos\N_Queens_GPU>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\bin\HostX86\x64" -x cu  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\include"  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc142.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\mneha\source\repos\N_Queens_GPU\kernel.cu" 
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(146): warning : transfer of control bypasses initialization of:
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(124): warning : transfer of control bypasses initialization of:
               variable "threadsPerBlock"
-  (149): here
+  (127): here
               variable "blocksPerGrid"
-  (150): here
+  (128): here
               variable "gpu_start"
+  (130): here
+              variable "gpu_end"
+  (151): here
+              variable "gpu_mseconds"
   (152): here
-              variable "gpu_end"
-  (178): here
-              variable "gpu_mseconds"
-  (179): here
   
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(160): warning : transfer of control bypasses initialization of:
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(138): warning : transfer of control bypasses initialization of:
               variable "gpu_end"
-  (178): here
+  (151): here
               variable "gpu_mseconds"
-  (179): here
-  
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(168): warning : transfer of control bypasses initialization of:
-              variable "gpu_end"
-  (178): here
-              variable "gpu_mseconds"
-  (179): here
-  
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(134): warning : variable "loc_board" was declared but never referenced
+  (152): here
   
 C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(146): warning : transfer of control bypasses initialization of:
-              variable "threadsPerBlock"
-  (149): here
-              variable "blocksPerGrid"
-  (150): here
-              variable "gpu_start"
+              variable "gpu_end"
+  (151): here
+              variable "gpu_mseconds"
   (152): here
-              variable "gpu_end"
-  (178): here
-              variable "gpu_mseconds"
-  (179): here
   
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(160): warning : transfer of control bypasses initialization of:
-              variable "gpu_end"
-  (178): here
-              variable "gpu_mseconds"
-  (179): here
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(112): warning : variable "loc_board" was declared but never referenced
   
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(168): warning : transfer of control bypasses initialization of:
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(124): warning : transfer of control bypasses initialization of:
+              variable "threadsPerBlock"
+  (127): here
+              variable "blocksPerGrid"
+  (128): here
+              variable "gpu_start"
+  (130): here
               variable "gpu_end"
-  (178): here
+  (151): here
               variable "gpu_mseconds"
-  (179): here
+  (152): here
+  
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(138): warning : transfer of control bypasses initialization of:
+              variable "gpu_end"
+  (151): here
+              variable "gpu_mseconds"
+  (152): here
+  
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(146): warning : transfer of control bypasses initialization of:
+              variable "gpu_end"
+  (151): here
+              variable "gpu_mseconds"
+  (152): here
   
   kernel.cu
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(194): warning C4533: initialization of 'gpu_end' is skipped by 'goto Error'
-  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(178): note: see declaration of 'gpu_end'
-  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(194): note: see declaration of 'Error'
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(194): warning C4533: initialization of 'gpu_start' is skipped by 'goto Error'
-  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(152): note: see declaration of 'gpu_start'
-  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(194): note: see declaration of 'Error'
-C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(134): warning C4101: 'loc_board': unreferenced local variable
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(173): warning C4533: initialization of 'gpu_end' is skipped by 'goto Error'
+  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(151): note: see declaration of 'gpu_end'
+  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(173): note: see declaration of 'Error'
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(173): warning C4533: initialization of 'gpu_start' is skipped by 'goto Error'
+  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(130): note: see declaration of 'gpu_start'
+  C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(173): note: see declaration of 'Error'
+C:/Users/mneha/source/repos/N_Queens_GPU/kernel.cu(112): warning C4101: 'loc_board': unreferenced local variable
   N_Queens_GPU.vcxproj -> C:\Users\mneha\source\repos\N_Queens_GPU\x64\Debug\N_Queens_GPU.exe
