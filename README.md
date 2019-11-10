@@ -1,9 +1,9 @@
 # A GPU-accelerated N-Queens solver
 
-This implements the linear time algorithm presented in the following paper:  
+This program implements a linear time algorithm using concepts presented in the following paper:  
 [https://arxiv.org/pdf/1805.07329.pdf].
 
-Since the placement of the queens are no longer interdependent, I was able to parallelize the algorithm using the CUDA API (just for fun). The result is an extremely fast solver, capable of solving for N = 268,435,456 in about 173 milliseconds. There is some overhead due to the data transfer between the host computer and the GPU, so the script takes a total of 1.7 seconds to run:
+Since the individual placement of the queens are no longer interdependent, I was able to parallelize the algorithm using the CUDA API (just for fun). The result is an extremely fast solver, capable of solving for N = 268,435,456 in about 173 milliseconds. There is some overhead due to the data transfer between the host computer and the GPU, so the script takes a total of 1.7 seconds to run:
 
 ![Screen Capture](screencap.JPG) 
 
