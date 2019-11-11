@@ -84,6 +84,7 @@ __global__ void N_Queens_Kernel(int num_queens)
 		board[x1] = y1;
 
 		if (collision_flag[0] == 1 || occ_ddiag[0] == 1) {
+			collision_flag[0] == 0;
 			x = i - 1;
 			y = (2 * i + num_queens / 2 - 3 % num_queens) % num_queens;
 			x1 = num_queens - 1 - i;
