@@ -27,7 +27,7 @@ __device__ short collision_flag[1] = { 0 }; // Flag raised if any 2 Queens can a
 
 // GPU functions
 __device__ void register_q(int x, int y, int num_queens) // Check for collision and add queen to occupancy lists
-{	
+{
 	if (occ_col[x] != 0 || occ_row[y] != 0 || occ_adiag[(x + y)] != 0 || occ_ddiag[num_queens + (x - y)] != 0) {
 		collision_flag[0] = 1;
 	}
@@ -44,7 +44,6 @@ __global__ void N_Queens_Kernel(int num_queens)
 	int i = (blockDim.x * blockIdx.x + threadIdx.x) + 1;
 	int x, y, x1, y1;
 
-
 	if (num_queens % 2 == 0 && (num_queens - 2) % 6 != 0) { // Case 1, N is even and (N-2) mod 6 is not 0
 		if (i > num_queens / 2) {
 			return;
@@ -54,15 +53,15 @@ __global__ void N_Queens_Kernel(int num_queens)
 		x1 = num_queens / 2 + i;
 		y1 = 2 * i - 1;
 
-		register_q(x-1, y-1, num_queens);
-		register_q(x1-1, y1-1, num_queens);
+		register_q(x - 1, y - 1, num_queens);
+		register_q(x1 - 1, y1 - 1, num_queens);
 
 		board[x - 1] = y - 1;
 		board[x1 - 1] = y1 - 1;
 
 	}
 	else if (num_queens % 2 == 0 && num_queens % 6 != 0) { // Case 2, N is even and N mod 6 is not 0
-		if (i > num_queens/2) {
+		if (i > num_queens / 2) {
 			return;
 		}
 		x = i;
@@ -70,8 +69,8 @@ __global__ void N_Queens_Kernel(int num_queens)
 		x1 = num_queens + 1 - i;
 		y1 = num_queens - ((2 * (i - 1) + num_queens / 2 - 1) % num_queens);
 
-		register_q(x-1, y-1, num_queens);
-		register_q(x1-1, y1-1, num_queens);
+		register_q(x - 1, y - 1, num_queens);
+		register_q(x1 - 1, y1 - 1, num_queens);
 
 		board[x - 1] = y - 1;
 		board[x1 - 1] = y1 - 1;
@@ -86,8 +85,8 @@ __global__ void N_Queens_Kernel(int num_queens)
 		x1 = (num_queens - 1) / 2 + i;
 		y1 = 2 * i - 1;
 
-		register_q(x-1, y-1, num_queens - 1);
-		register_q(x1-1, y1-1, num_queens - 1);
+		register_q(x - 1, y - 1, num_queens - 1);
+		register_q(x1 - 1, y1 - 1, num_queens - 1);
 
 		board[x - 1] = y - 1;
 		board[x1 - 1] = y1 - 1;
@@ -105,8 +104,8 @@ __global__ void N_Queens_Kernel(int num_queens)
 		x1 = num_queens - i;
 		y1 = (num_queens - 1) - ((2 * (i - 1) + (num_queens - 1) / 2 - 1) % (num_queens - 1));
 
-		register_q(x-1, y-1, num_queens - 1);
-		register_q(x1-1, y1-1, num_queens - 1);
+		register_q(x - 1, y - 1, num_queens - 1);
+		register_q(x1 - 1, y1 - 1, num_queens - 1);
 
 		board[x - 1] = y - 1;
 		board[x1 - 1] = y1 - 1;
@@ -198,7 +197,7 @@ int main()
 	for (int i = 0; i < Nq; i++) {
 		std::cout << loc_board[i] << std::endl;
 	}
-	
+
 
 	// Free up all GPU memory
 Error:
@@ -208,7 +207,7 @@ Error:
 	cudaFree(occ_row);
 	cudaFree(occ_adiag);
 	cudaFree(occ_ddiag);
-	
+
 
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "queens died :(");

@@ -1,6 +1,6 @@
 # A GPU-accelerated N-Queens solver
 
-This program implements a linear time algorithm to generate *one* feasible solution to the N-Queens problem for all N. Generating *all* possible solutions for each value of N is an NP-Hard problem.
+This program implements a linear time algorithm to generate *one* feasible solution to the N-Queens problem for any value of N. Finding *all* possible solutions for each value of N, however, is an NP-Hard problem.
 
 Since the individual placement of the queens are no longer interdependent, I was able to parallelize the algorithm using the CUDA API (just for fun). The result is an extremely fast solver, capable of solving for N = 268,435,456 in about 173 milliseconds. There is some overhead due to the data transfer between the host computer and the GPU, so the script takes a total of 1.7 seconds to run:
 
