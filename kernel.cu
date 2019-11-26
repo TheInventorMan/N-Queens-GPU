@@ -280,6 +280,8 @@ int main()
 			else {
 				double sol_size = Nq * 16;
 				string suffix = " bytes.";
+				string prefix = "";
+
 				if (sol_size > 1000000000) {
 					sol_size /= 1000000000;
 					suffix = " GB.";
@@ -292,8 +294,12 @@ int main()
 					sol_size /= 1000;
 					suffix = " KB.";
 				}
-
-				cout << "Solution too large to display. Solution size: " << sol_size << suffix << endl;
+				else if (sol_size == 0) {
+					sol_size = 2.048;
+					prefix = ">";
+					suffix = " GB.";
+				}
+				cout << "Solution too large to display. Solution size: " << prefix << sol_size << suffix << endl;
 			}
 			cout << endl;
 
