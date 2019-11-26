@@ -133,7 +133,7 @@ int main()
 
 	// Allocate CUDA blocks and threads to dispatch
 	int threadsPerBlock = 256;
-	int blocksPerGrid = (Nq / 2 + threadsPerBlock - 1) / threadsPerBlock;
+	int blocksPerGrid = (Nq / 2 + threadsPerBlock) / threadsPerBlock;
 
 	// Initialize
 	cudaStatus = cudaSetDevice(0);
