@@ -14,7 +14,7 @@ __global__ void N_Queens_Kernel(int num_queens);
 
 
 // Global variables
-const int Nq = 21;//(2147483648 / 8)-3; // N = 1/8 maxint32 = 268,435,456 queens
+const int Nq = 21; //(2147483648 / 8); // N = 1/8 maxint32 = 268,435,456 queens
 
 // GPU-local variables
 __device__ int board[Nq] = { 0 };   // list of queen positions, where board[x] = y
@@ -136,9 +136,6 @@ int main()
 	// Allocate CUDA blocks and threads to dispatch
 	int threadsPerBlock = 256;
 	int blocksPerGrid = (Nq / 2 + threadsPerBlock - 1) / threadsPerBlock;
-	//if (Nq % 2 == 1) {
-	//	blocksPerGrid = ((Nq-1) / 2 + threadsPerBlock - 1) / threadsPerBlock;
-	//}
 
 	// Initialize
 	cudaStatus = cudaSetDevice(0);
@@ -147,11 +144,10 @@ int main()
 		goto Error;
 	}
 
-
-	if (Nq % 2 == 0 && (Nq - 2) % 6 != 0) { // Case 1, N is even and (N-2) mod 6 is not 0
+	if (Nq % 2 == 0 && (Nq - 2) % 6 != 0) {
 		std::cout << "Case 1" << std::endl;
 	}
-	else if (Nq % 2 == 0 && Nq % 6 != 0) { // Case 2, N is even and N mod 6 is not 0
+	else if (Nq % 2 == 0 && Nq % 6 != 0) {
 		std::cout << "Case 2" << std::endl;
 	}
 	else if ((Nq - 1) % 2 == 0 && (Nq - 3) % 6 != 0) {
@@ -171,7 +167,6 @@ int main()
 		fprintf(stderr, "Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
 		goto Error;
 	}
-
 
 	// Wait for all cores to terminate
 	cudaStatus = cudaDeviceSynchronize();

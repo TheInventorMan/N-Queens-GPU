@@ -13,4 +13,12 @@ The main code can be found in "kernel.cu".
 
 Right now, the only task pending is a way to push the solution array from the GPU back to my local machine in chunks. The built-in cudaMemcpy function seems to copy the solution array as one very long, linear byte sequence. As N becomes very large, the solution reaches several hundreds of megabytes to a few gigabytes, before we start hitting integer limits and cannot go any further.  
 
- 
+References:
+
+Mikhailovskii, Dmitrii. "New explicit solution to the N-Queens Problem and its relation to the Millennium Problem." arXiv preprint arXiv:1805.07329 (2018).
+
+Hoffman, E. J., et al. “Constructions for the Solution of the m Queens Problem.” Mathematics Magazine, vol. 42, no. 2, 1969, pp. 66–72. JSTOR, www.jstor.org/stable/2689192.
+
+Bernhardsson, Bo. “Explicit solutions to the N-queens problem for all N.” SGAR (1991).
+
+
