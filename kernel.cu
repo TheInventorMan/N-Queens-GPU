@@ -14,7 +14,7 @@ __global__ void N_Queens_Kernel(int num_queens);
 
 
 // Global variables
-const int Nq = 21; // (2147483648 / 8); // N = 1 / 8 maxint32 = 268, 435, 456 queens
+const int Nq = 21; // N = 1/8 maxint32 = (2147483648 / 8) = 268,435,456 queens
 
 
 // GPU-local variables
@@ -42,7 +42,7 @@ __device__ void register_q(int x, int y, int num_queens) // Check for collision 
 __global__ void N_Queens_Kernel(int num_queens)
 {
 
-	int i = (blockDim.x * blockIdx.x + threadIdx.x) + 1;
+	int i = (blockDim.x * blockIdx.x + threadIdx.x) + 1; // Each thread places 2 queens
 	int x, y, x1, y1;
 
 	if (num_queens % 2 == 0 && (num_queens - 2) % 6 != 0) { // Case 1, N is even and (N-2) mod 6 is not 0
@@ -77,7 +77,7 @@ __global__ void N_Queens_Kernel(int num_queens)
 		board[x1 - 1] = y1 - 1;
 
 	}
-	else if ((num_queens - 1) % 2 == 0 && (num_queens - 3) % 6 != 0) { // Case 3
+	else if ((num_queens - 1) % 2 == 0 && (num_queens - 3) % 6 != 0) { // Case 3, N is odd, and (N-3) mod 6 is not 0
 		if (i > (num_queens - 1) / 2) {
 			return;
 		}
@@ -96,7 +96,7 @@ __global__ void N_Queens_Kernel(int num_queens)
 			board[num_queens - 1] = num_queens - 1;
 		}
 	}
-	else if ((num_queens - 1) % 2 == 0 && (num_queens - 1) % 6 != 0) { // Case 4
+	else if ((num_queens - 1) % 2 == 0 && (num_queens - 1) % 6 != 0) { // Case 4, N is odd and (N-1) mod 6 is not 0
 		if (i > (num_queens - 1) / 2) {
 			return;
 		}
@@ -119,9 +119,10 @@ __global__ void N_Queens_Kernel(int num_queens)
 
 
 int main()
- {
+{
 	auto global_start = std::chrono::system_clock::now(); // Program start time
 
+	// Store pointers to GPU memory locally
 	int* cflag_ptr = 0;
 	int* board_ptr = 0;
 	short local_flag = 0;
@@ -135,13 +136,14 @@ int main()
 	int threadsPerBlock = 256;
 	int blocksPerGrid = (Nq / 2 + threadsPerBlock) / threadsPerBlock;
 
-	// Initialize
+	// Initialize GPU
 	cudaStatus = cudaSetDevice(0);
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
 		goto Error;
 	}
 
+	// Display case number depending on value of N
 	if (Nq % 2 == 0 && (Nq - 2) % 6 != 0) {
 		std::cout << "Case 1" << std::endl;
 	}
@@ -176,7 +178,7 @@ int main()
 	// Copy verification flag state to host
 	cudaStatus = cudaMemcpy(&local_flag, cflag_ptr, sizeof(short), cudaMemcpyDeviceToHost);
 
-	// Debug
+	// Verbose debug output
 	std::cout << "N = " << Nq << std::endl;
 	if (local_flag == 0) {
 		std::cout << "Solution verified" << std::endl;
@@ -185,8 +187,7 @@ int main()
 	std::chrono::duration<double> gpu_mseconds = (gpu_end - gpu_start) * 1000;
 	std::cout << "GPU time (ms): " << gpu_mseconds.count() << std::endl;
 
-
-	// Copy output vector from GPU buffer to host memory. Only works for N < 30
+	// Copy output vector from GPU buffer to host memory. Only works for N < 30 (arbitrary)
 	if (Nq < 30) {
 		int loc_board[Nq];
 		cudaStatus = cudaMemcpy(loc_board, board_ptr, Nq * sizeof(int), cudaMemcpyDeviceToHost);
@@ -215,16 +216,16 @@ Error:
 	cudaFree(occ_adiag);
 	cudaFree(occ_ddiag);
 
-
+	// Ensure no errors on the status flag
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "queens died :(");
 		return 1;
 	}
 
+	// Display total execution time
 	auto global_end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = global_end - global_start;
 	std::cout << "Total exec time (s): " << elapsed_seconds.count() << std::endl;
-
 
 	// cudaDeviceReset must be called before exiting
 	cudaStatus = cudaDeviceReset();
