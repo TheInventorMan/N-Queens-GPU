@@ -14,7 +14,8 @@ __global__ void N_Queens_Kernel(int num_queens);
 
 
 // Global variables
-const int Nq = 21; //(2147483648 / 8); // N = 1/8 maxint32 = 268,435,456 queens
+const int Nq = 21; // (2147483648 / 8); // N = 1 / 8 maxint32 = 268, 435, 456 queens
+
 
 // GPU-local variables
 __device__ int board[Nq] = { 0 };   // list of queen positions, where board[x] = y
@@ -118,14 +119,12 @@ __global__ void N_Queens_Kernel(int num_queens)
 
 
 int main()
-{
+ {
 	auto global_start = std::chrono::system_clock::now(); // Program start time
 
 	int* cflag_ptr = 0;
 	int* board_ptr = 0;
 	short local_flag = 0;
-	int loc_board[Nq];
-
 
 	// Get pointers to GPU buffers
 	cudaError_t cudaStatus;
@@ -187,17 +186,25 @@ int main()
 	std::cout << "GPU time (ms): " << gpu_mseconds.count() << std::endl;
 
 
-	// Copy output vector from GPU buffer to host memory. ***Does not work for very big N
-	cudaStatus = cudaMemcpy(loc_board, board_ptr, Nq * sizeof(int), cudaMemcpyDeviceToHost);
-	if (cudaStatus != cudaSuccess) {
-		fprintf(stderr, "cudaMemcpy failed!");
-		goto Error;
-	}
+	// Copy output vector from GPU buffer to host memory. Only works for N < 30
+	if (Nq < 30) {
+		int loc_board[Nq];
+		cudaStatus = cudaMemcpy(loc_board, board_ptr, Nq * sizeof(int), cudaMemcpyDeviceToHost);
+		if (cudaStatus != cudaSuccess) {
+			fprintf(stderr, "cudaMemcpy failed!");
+			goto Error;
+		}
 
-	for (int i = 0; i < Nq; i++) {
-		std::cout << loc_board[i] << std::endl;
-	}
+		std::cout << "Solution: " << std::endl;
 
+		for (int i = 0; i < Nq; i++) {
+			std::cout << loc_board[i] << " ";
+		}
+		std::cout << std::endl;
+	}
+	else {
+		std::cout << "Solution too large to display" << std::endl;
+	}
 
 	// Free up all GPU memory
 Error:
