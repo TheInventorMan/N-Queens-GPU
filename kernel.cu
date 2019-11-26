@@ -46,6 +46,7 @@ __global__ void N_Queens_Kernel(int num_queens)
 	int x, y, x1, y1;
 
 	if (num_queens % 2 == 0 && (num_queens - 2) % 6 != 0) { // Case 1, N is even and (N-2) mod 6 is not 0
+
 		if (i > num_queens / 2) {
 			return;
 		}
@@ -62,6 +63,7 @@ __global__ void N_Queens_Kernel(int num_queens)
 
 	}
 	else if (num_queens % 2 == 0 && num_queens % 6 != 0) { // Case 2, N is even and N mod 6 is not 0
+
 		if (i > num_queens / 2) {
 			return;
 		}
@@ -78,6 +80,7 @@ __global__ void N_Queens_Kernel(int num_queens)
 
 	}
 	else if ((num_queens - 1) % 2 == 0 && (num_queens - 3) % 6 != 0) { // Case 3, N is odd, and (N-3) mod 6 is not 0
+
 		if (i > (num_queens - 1) / 2) {
 			return;
 		}
@@ -97,6 +100,7 @@ __global__ void N_Queens_Kernel(int num_queens)
 		}
 	}
 	else if ((num_queens - 1) % 2 == 0 && (num_queens - 1) % 6 != 0) { // Case 4, N is odd and (N-1) mod 6 is not 0
+
 		if (i > (num_queens - 1) / 2) {
 			return;
 		}
@@ -159,7 +163,7 @@ int main()
 
 	auto gpu_start = std::chrono::system_clock::now(); // GPU processing start time
 
-	N_Queens_Kernel << <blocksPerGrid, threadsPerBlock >> > (Nq); // Execute GPU code
+	N_Queens_Kernel <<<blocksPerGrid, threadsPerBlock >>> (Nq); // Execute GPU code
 
 	// Check for any errors launching the kernels
 	cudaStatus = cudaGetLastError();
