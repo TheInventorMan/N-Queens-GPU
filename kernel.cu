@@ -17,12 +17,12 @@
 const int MAX_N = (2147483648 / 8); // N = 1/8 maxint32 = (2147483648 / 8) = 268,435,456 queens
 
 // GPU-local variables
-__device__ static int board[MAX_N] = { 0 };   // list of queen positions, where board[x] = y
-__device__ static short occ_col[MAX_N];       // column occupancy
-__device__ static short occ_row[MAX_N];       // row occupancy
-__device__ static short occ_adiag[2 * MAX_N]; // ascending diagonal occupancy
-__device__ static short occ_ddiag[2 * MAX_N]; // decending diagonal occupancy
-__device__ static short collision_flag[1] = { 0 }; // Flag raised if any 2 Queens can attack each other
+__device__ int board[MAX_N] = { 0 };   // list of queen positions, where board[x] = y
+__device__ short occ_col[MAX_N];       // column occupancy
+__device__ short occ_row[MAX_N];       // row occupancy
+__device__ short occ_adiag[2 * MAX_N]; // ascending diagonal occupancy
+__device__ short occ_ddiag[2 * MAX_N]; // decending diagonal occupancy
+__device__ short collision_flag[1] = { 0 }; // Flag raised if any 2 Queens can attack each other
 
 // Forward declarations
 __device__ void register_q(int x, int y, int num_queens);
@@ -397,6 +397,7 @@ int main()
 {
 	using namespace std;
 	cudaError_t cudaStatus;
+	int* board_ptr = board;
 
 	auto global_start = chrono::system_clock::now(); // Program start time
 
