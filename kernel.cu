@@ -183,6 +183,15 @@ int main()
 			cin >> _;
 			cls();
 			continue;
+
+			int lower, upper;
+
+			cout << "Enter lower bound: ";
+			cin >> lower;
+			cout << "Enter upper bound: ";
+			cin >> upper;
+
+
 		}
 		else if (resp == 1) {
 
