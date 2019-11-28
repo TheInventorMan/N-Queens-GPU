@@ -6,7 +6,7 @@
 #include "device_launch_parameters.h"
 #endif // !__DEVICE_LAUNCH_PARAMETERS_H__
 
-// Global variables
+// Constants
 const int MAX_N = (2147483648 / 8); // N = 1/8 maxint32 = (2147483648 / 8) = 268,435,456 queens
 
 // GPU-local variables
@@ -34,6 +34,7 @@ __device__ void register_q(int x, int y, int num_queens) // Check for collision 
 	return;
 }
 
+// Equation 1
 __device__ void case1(int i, int N) {
 	int x, y, x1, y1;
 	x = i;
@@ -50,6 +51,7 @@ __device__ void case1(int i, int N) {
 	return;
 }
 
+// Equation 2
 __device__ void case2(int i, int N) {
 	int x, y, x1, y1;
 	x = i;
@@ -66,7 +68,7 @@ __device__ void case2(int i, int N) {
 	return;
 }
 
-// GPU kernel
+// Main GPU kernel
 __global__ void N_Queens_Kernel(int num_queens)
 {
 
@@ -98,8 +100,9 @@ __global__ void N_Queens_Kernel(int num_queens)
 	return;
 }
 
+// Resets board and occupancy grid
 __global__ void clearBuffers(int num_queens) {
-	int i = (blockDim.x * blockIdx.x + threadIdx.x); // i < n/2
+	int i = (blockDim.x * blockIdx.x + threadIdx.x);
 
 	board[2 * i] = 0;
 	board[2 * i + 1] = 0;
@@ -126,6 +129,7 @@ __global__ void clearBuffers(int num_queens) {
 
 }
 
+// Returns symbol addresses for interface variables
 int* getBoardAddr() {
 	int* board_ptr = 0;
 	cudaGetSymbolAddress((void**)&board_ptr, board);
@@ -143,6 +147,8 @@ int getMaxN() {
 	return N;
 }
 
+
+// Frees all memory prior to shutdown
 void memPurge() {
 	cudaFree(board);
 	cudaFree(collision_flag);

@@ -8,20 +8,19 @@
 
 using namespace std;
 
-// Forward declarations
+// GPU functions
 __device__ void register_q(int x, int y, int num_queens);
 __device__ void case1(int i, int N);
 __device__ void case2(int i, int N);
 __global__ void N_Queens_Kernel(int num_queens);
 __global__ void clearBuffers(int num_queens);
 
+// Host functions
 void memPurge();
-
 int* getBoardAddr();
 int* getFlagAddr();
 int getMaxN();
 
-// Host code forward declarations
+// Solver functions
 cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr);
 cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr);
-void cls();

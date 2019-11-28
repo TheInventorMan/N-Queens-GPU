@@ -17,12 +17,12 @@
 
 using namespace std;
 
+// Solves for a range of N: [lower, upper)
 cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
-
-	short local_flag = 0;
 
 	cudaError_t cudaStatus;
 
+	// Solver status variables
 	double tot_time = 0;
 	vector<int> fail_list;
 	int num_fails = 0;
@@ -42,7 +42,7 @@ cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
 		cudaStatus = cudaGetLastError();
 		if (cudaStatus != cudaSuccess) {
 			cout << "Failure at N = " << Nq << endl;
-			fprintf(stderr, "Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
+			fprintf(stderr, "N_Queens_Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
 			memPurge();
 			return cudaStatus;
 		}
@@ -57,13 +57,16 @@ cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
 		}
 
 		// Copy verification flag state to host
+		short local_flag = 0;
 		cudaStatus = cudaMemcpy(&local_flag, cflag_ptr, sizeof(short), cudaMemcpyDeviceToHost);
 
+		// Add current N to list if it fails
 		if (local_flag != 0) {
 			fail_list.push_back(Nq);
 			num_fails += 1;
 		}
 
+		// Give status update every 1/10th of range
 		if ((Nq - lower) % (1 + (upper - lower) / 10) == 0) {
 			pct_complete = 100 * (Nq - lower + 1) / (upper - lower);
 			cout << pct_complete << "% complete, up to N = " << Nq << ". # of failures: " << num_fails << endl;
@@ -75,7 +78,7 @@ cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
 		// Check for any errors launching the kernels
 		cudaStatus = cudaGetLastError();
 		if (cudaStatus != cudaSuccess) {
-			fprintf(stderr, "Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
+			fprintf(stderr, "clearBuffers kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
 			memPurge();
 			return cudaStatus;
 		}
@@ -93,10 +96,13 @@ cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
 		tot_time += gpu_mseconds.count();
 
 	}
+
+	// Check if whole range passed
 	if (num_fails == 0) {
 		cout << "All solutions verified for range [" << lower << ", " << upper << "]." << endl;
 	}
 	cout << endl;
 	cout << "Total GPU time (s): " << tot_time / 1000 << endl;
+
 	return cudaStatus;
 }

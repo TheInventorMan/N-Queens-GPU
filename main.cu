@@ -17,6 +17,7 @@
 
 using namespace std;
 
+// Clear screen helper
 void cls() {
 	std::cout << "\033[2J\033[1;1H";
 }
@@ -24,13 +25,14 @@ void cls() {
 int main()
 {
 	cudaError_t cudaStatus;
+	int MAX_N = getMaxN();
 
 	// Store pointers to GPU memory locally
 	int* cflag_ptr = getFlagAddr();
 	int* board_ptr = getBoardAddr();
-
-	int MAX_N = getMaxN();
 	
+	auto global_start = chrono::system_clock::now(); // Program start time
+
 	// Initialize GPU
 	cudaStatus = cudaSetDevice(0);
 	if (cudaStatus != cudaSuccess) {
@@ -38,8 +40,7 @@ int main()
 		goto Error;
 	}
 
-	auto global_start = chrono::system_clock::now(); // Program start time
-
+	// Loop until user issues quit command
 	while (1) {
 
 		cout << "Interactive GPU-Accelerated N-Queens Solver" << endl;
@@ -52,11 +53,11 @@ int main()
 		char _;
 
 		cin >> resp;
-		if (resp == 3) {
+		if (resp == 3) { // Quit out of program
 			break;
 		}
 
-		else if (resp == 2) {
+		else if (resp == 2) { // Solve for range of N
 
 			int lower, upper;
 
@@ -81,7 +82,7 @@ int main()
 			cls();
 
 		}
-		else if (resp == 1) {
+		else if (resp == 1) { // Solve for single value of N
 
 			int Nq = 0;
 

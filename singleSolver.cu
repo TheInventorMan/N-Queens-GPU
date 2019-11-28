@@ -17,17 +17,14 @@
 
 using namespace std;
 
+// Solves for a single value of N
 cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 
-	short local_flag = 0;
-
-	// Get pointers to GPU buffers
 	cudaError_t cudaStatus;
 
 	// Allocate CUDA blocks and threads to dispatch
 	int threadsPerBlock = 256;
 	int blocksPerGrid = (Nq / 2 + threadsPerBlock) / threadsPerBlock;
-
 	cout << "Launching " << blocksPerGrid << " block with " << threadsPerBlock << " threads each." << endl;
 	cout << endl;
 
@@ -53,7 +50,7 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 	// Check for any errors launching the kernel
 	cudaStatus = cudaGetLastError();
 	if (cudaStatus != cudaSuccess) {
-		fprintf(stderr, "Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
+		fprintf(stderr, "N_Queens_Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
 		memPurge();
 		return cudaStatus;
 	}
@@ -67,6 +64,7 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 	}
 
 	// Copy verification flag state to host
+	short local_flag = 0;
 	cudaStatus = cudaMemcpy(&local_flag, cflag_ptr, sizeof(short), cudaMemcpyDeviceToHost);
 
 	// Verbose debug output
@@ -80,7 +78,7 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 	chrono::duration<double> gpu_mseconds = (gpu_end - gpu_start) * 1000;
 	cout << "GPU time (ms): " << gpu_mseconds.count() << endl;
 
-	// Copy output vector from GPU buffer to host memory. Only works for N < 32 (arbitrary)
+	// Copy output vector from GPU buffer to host memory to be displayed. Only works for N < 32 (arbitrary)
 	if (Nq < 32) {
 		int loc_board[32];
 		cudaStatus = cudaMemcpy(loc_board, board_ptr, Nq * sizeof(int), cudaMemcpyDeviceToHost);
@@ -90,8 +88,9 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 			return cudaStatus;
 		}
 		cout << endl;
-		cout << "Solution: " << endl;
 
+		// Output graphical solution
+		cout << "Solution: " << endl;
 		for (int i = 0; i < Nq; i++) {
 			for (int j = 0; j < Nq; j++) {
 				if (j == loc_board[i]) {
@@ -106,6 +105,8 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 		cout << endl;
 	}
 	else {
+
+		// If N is too large, will instead output solution dataset size
 		double sol_size = Nq * 16;
 		string suffix = " bytes.";
 		string prefix = "";
@@ -134,10 +135,10 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 	// Clear board and occupancy grid
 	clearBuffers << <blocksPerGrid, threadsPerBlock >> > (Nq);
 
-	// Check for any errors launching the kernels
+	// Check for any errors launching the kernel
 	cudaStatus = cudaGetLastError();
 	if (cudaStatus != cudaSuccess) {
-		fprintf(stderr, "Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
+		fprintf(stderr, "clearBuffers kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
 		memPurge();
 		return cudaStatus;
 	}
