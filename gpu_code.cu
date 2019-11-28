@@ -7,14 +7,14 @@
 #endif // !__DEVICE_LAUNCH_PARAMETERS_H__
 
 // Constants
-const int MAX_N = (2147483648 / 8); // N = 1/8 maxint32 = (2147483648 / 8) = 268,435,456 queens
+const int MAX_N = (2147483648 / 8); // N = maxInt32 / 8 = (2147483648 / 8) = 268,435,456 queens
 
 // GPU-local variables
 __device__ int board[MAX_N] = { 0 };		// list of queen positions, where board[x] = y
-__device__ short occ_col[MAX_N];			// column occupancy (x)
-__device__ short occ_row[MAX_N];			// row occupancy (y)
-__device__ short occ_adiag[2 * MAX_N];		// ascending diagonal occupancy (x+y)
-__device__ short occ_ddiag[2 * MAX_N];		// decending diagonal occupancy (x-y)
+__device__ short occ_col[MAX_N];			// column occupancy (unique x)
+__device__ short occ_row[MAX_N];			// row occupancy (unique y)
+__device__ short occ_adiag[2 * MAX_N];		// ascending diagonal occupancy (unique x+y)
+__device__ short occ_ddiag[2 * MAX_N];		// decending diagonal occupancy (unique x-y)
 __device__ short collision_flag[1] = { 0 }; // Flag raised if any 2 Queens can attack each other
 
 using namespace std;
