@@ -43,9 +43,11 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 	}
 	cout << endl;
 
-	auto gpu_start = chrono::system_clock::now(); // GPU processing start time
+	// GPU processing start time
+	auto gpu_start = chrono::system_clock::now();
 
-	N_Queens_Kernel << <blocksPerGrid, threadsPerBlock >> > (Nq); // Execute GPU code
+	// Execute main GPU code
+	N_Queens_Kernel <<<blocksPerGrid, threadsPerBlock>>> (Nq);
 
 	// Check for any errors launching the kernel
 	cudaStatus = cudaGetLastError();
@@ -133,7 +135,7 @@ cudaError_t singleSolve(int Nq, int* cflag_ptr, int* board_ptr) {
 	cout << endl;
 
 	// Clear board and occupancy grid
-	clearBuffers << <blocksPerGrid, threadsPerBlock >> > (Nq);
+	clearBuffers <<<blocksPerGrid, threadsPerBlock>>> (Nq);
 
 	// Check for any errors launching the kernel
 	cudaStatus = cudaGetLastError();

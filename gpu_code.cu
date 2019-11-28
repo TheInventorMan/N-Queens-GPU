@@ -10,17 +10,17 @@
 const int MAX_N = (2147483648 / 8); // N = 1/8 maxint32 = (2147483648 / 8) = 268,435,456 queens
 
 // GPU-local variables
-__device__ int board[MAX_N] = { 0 };   // list of queen positions, where board[x] = y
-__device__ short occ_col[MAX_N];       // column occupancy
-__device__ short occ_row[MAX_N];       // row occupancy
-__device__ short occ_adiag[2 * MAX_N]; // ascending diagonal occupancy
-__device__ short occ_ddiag[2 * MAX_N]; // decending diagonal occupancy
+__device__ int board[MAX_N] = { 0 };		// list of queen positions, where board[x] = y
+__device__ short occ_col[MAX_N];			// column occupancy (x)
+__device__ short occ_row[MAX_N];			// row occupancy (y)
+__device__ short occ_adiag[2 * MAX_N];		// ascending diagonal occupancy (x+y)
+__device__ short occ_ddiag[2 * MAX_N];		// decending diagonal occupancy (x-y)
 __device__ short collision_flag[1] = { 0 }; // Flag raised if any 2 Queens can attack each other
 
 using namespace std;
 
-// GPU functions
-__device__ void register_q(int x, int y, int num_queens) // Check for collision and add queen to occupancy lists
+// Adds queen to occupancy arrays and checks for collisions
+__device__ void register_q(int x, int y, int num_queens)
 {
 	if (occ_col[x] != 0 || occ_row[y] != 0 || occ_adiag[(x + y)] != 0 || occ_ddiag[num_queens + (x - y)] != 0) {
 		collision_flag[0] = 1;
@@ -71,26 +71,33 @@ __device__ void case2(int i, int N) {
 // Main GPU kernel
 __global__ void N_Queens_Kernel(int num_queens)
 {
-
-	int i = (blockDim.x * blockIdx.x + threadIdx.x) + 1; // Each thread places 2 queens
+	// Each thread places 2 queens
+	int i = (blockDim.x * blockIdx.x + threadIdx.x) + 1; 
 
 	if (i > (num_queens - num_queens % 2) / 2) {
 		return;
 	}
 
-	if (num_queens % 2 == 0 && (num_queens - 2) % 6 != 0) { // Case 1, N is even and (N-2) mod 6 is not 0
+	// Case 1, N is even and (N-2) mod 6 is not 0
+	if (num_queens % 2 == 0 && (num_queens - 2) % 6 != 0) { 
 		case1(i, num_queens);
 	}
-	else if (num_queens % 2 == 0 && num_queens % 6 != 0) { // Case 2, N is even and N mod 6 is not 0
+
+	// Case 2, N is even and N mod 6 is not 0
+	else if (num_queens % 2 == 0 && num_queens % 6 != 0) { 
 		case2(i, num_queens);
 	}
-	else if ((num_queens - 1) % 2 == 0 && (num_queens - 3) % 6 != 0) { // Case 3, N is odd, and (N-3) mod 6 is not 0
+
+	// Case 3, N is odd, and (N-3) mod 6 is not 0
+	else if ((num_queens - 1) % 2 == 0 && (num_queens - 3) % 6 != 0) { 
 		case1(i, num_queens - 1);
 		if (blockIdx.x == 0 && threadIdx.x == 0) {
 			board[num_queens - 1] = num_queens - 1;
 		}
 	}
-	else if ((num_queens - 1) % 2 == 0 && (num_queens - 1) % 6 != 0) { // Case 4, N is odd and (N-1) mod 6 is not 0
+
+	// Case 4, N is odd and (N-1) mod 6 is not 0
+	else if ((num_queens - 1) % 2 == 0 && (num_queens - 1) % 6 != 0) { 
 		case2(i, num_queens - 1);
 		if (blockIdx.x == 0 && threadIdx.x == 0) {
 			board[num_queens - 1] = num_queens - 1;

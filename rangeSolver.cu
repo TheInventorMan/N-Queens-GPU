@@ -34,9 +34,11 @@ cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
 		int threadsPerBlock = 256;
 		int blocksPerGrid = (Nq / 2 + threadsPerBlock) / threadsPerBlock;
 
-		auto gpu_start = chrono::system_clock::now(); // GPU processing start time
+		// GPU processing start time
+		auto gpu_start = chrono::system_clock::now();
 
-		N_Queens_Kernel << <blocksPerGrid, threadsPerBlock >> > (Nq); // Execute GPU code
+		// Execute main GPU code
+		N_Queens_Kernel <<<blocksPerGrid, threadsPerBlock>>> (Nq);
 
 		// Check for any errors launching the kernel
 		cudaStatus = cudaGetLastError();
@@ -60,7 +62,7 @@ cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
 		short local_flag = 0;
 		cudaStatus = cudaMemcpy(&local_flag, cflag_ptr, sizeof(short), cudaMemcpyDeviceToHost);
 
-		// Add current N to list if it fails
+		// Add current N to list if it fails verification
 		if (local_flag != 0) {
 			fail_list.push_back(Nq);
 			num_fails += 1;
@@ -73,7 +75,7 @@ cudaError_t rangeSolve(int lower, int upper, int* cflag_ptr, int* board_ptr) {
 		}
 
 		// Clear board and occupancy grid
-		clearBuffers << <blocksPerGrid, threadsPerBlock >> > (Nq);
+		clearBuffers <<<blocksPerGrid, threadsPerBlock>>> (Nq);
 
 		// Check for any errors launching the kernels
 		cudaStatus = cudaGetLastError();

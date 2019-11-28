@@ -25,13 +25,14 @@ void cls() {
 int main()
 {
 	cudaError_t cudaStatus;
-	int MAX_N = getMaxN();
 
 	// Store pointers to GPU memory locally
 	int* cflag_ptr = getFlagAddr();
 	int* board_ptr = getBoardAddr();
+	int MAX_N = getMaxN();
 	
-	auto global_start = chrono::system_clock::now(); // Program start time
+	// Program start time
+	auto global_start = chrono::system_clock::now(); 
 
 	// Initialize GPU
 	cudaStatus = cudaSetDevice(0);
@@ -53,20 +54,26 @@ int main()
 		char _;
 
 		cin >> resp;
-		if (resp == 3) { // Quit out of program
+
+		// Quit out of program
+		if (resp == 3) { 
 			break;
 		}
 
-		else if (resp == 2) { // Solve for range of N
+		// Solve for range of N
+		else if (resp == 2) { 
 
 			int lower, upper;
 
-			cout << "Enter lower bound: ";
+			cout << "Enter lower bound (4 <= N <= " << MAX_N << "): ";
 			cin >> lower;
-			cout << "Enter upper bound: ";
+			cout << "Enter upper bound (" << lower << " < N <= " << MAX_N << "): ";
 			cin >> upper;
-
 			cls();
+
+			if (lower >= upper || lower < 4 || upper > MAX_N) {
+				continue;
+			}
 
 			global_start = chrono::system_clock::now();
 
@@ -82,19 +89,19 @@ int main()
 			cls();
 
 		}
-		else if (resp == 1) { // Solve for single value of N
+
+		// Solve for single value of N
+		else if (resp == 1) { 
 
 			int Nq = 0;
 
-			cout << "Enter number of queens between 4 and " << MAX_N << ": ";
+			cout << "Enter number of queens (4 <= N <= " << MAX_N << "): ";
 			cin >> Nq;
+			cls();
 
 			if (Nq < 4 || Nq > MAX_N) {
-				cls();
 				continue;
 			}
-
-			cls();
 
 			global_start = chrono::system_clock::now();
 
